@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIA AI - هوښیار مصنوعي ځیرکتیا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a2e;
+            --bg-card: #16213e;
+            --accent-cyan: #00f5ff;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border-color: #1e293b;
+            --gradient-1: linear-gradient(135deg, #00f5ff, #3b82f6);
+            --gradient-2: linear-gradient(135deg, #8b5cf6, #ec4899);
+            --gradient-3: linear-gradient(135deg, #00f5ff, #8b5cf6);
+            --glow-cyan: 0 0 30px rgba(0, 245, 255, 0.3);
+            --glow-purple: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ستوري لرونکی شالید */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 90px 40px, #ddd, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                radial-gradient(2px 2px at 160px 30px, #eee, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============ نویګیشن بار ============ */
+        .navbar {
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.8rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            animation: logoPulse 3s infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 245, 255, 0.3); }
+            50% { box-shadow: 0 0 35px rgba(0, 245, 255, 0.7), 0 0 50px rgba(139, 92, 246, 0.3); }
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .menu-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+        }
+
+        .menu-btn:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* ============ مینو پاپ اپ ============ */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-popup {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-popup h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .menu-option {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .menu-option:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        .menu-option i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-option.terminal-option i {
+            color: var(--accent-cyan);
+        }
+
+        .menu-option.chat-option i {
+            color: var(--accent-purple);
+        }
+
+        /* ============ ترمینل ============ */
+        .terminal-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+        }
+
+        .terminal-container.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .terminal-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .terminal-btn:hover {
+            background: var(--bg-card);
+        }
+
+        .terminal-btn.close-btn {
+            color: #ff4444;
+            border-color: #ff4444;
+        }
+
+        .terminal-output {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            background: #000;
+            color: #00ff41;
+        }
+
+        .terminal-output .log-line {
+            margin: 0.3rem 0;
+        }
+
+        .terminal-output .log-line.info {
+            color: #00ff41;
+        }
+
+        .terminal-output .log-line.success {
+            color: #00ff00;
+        }
+
+        .terminal-output .log-line.warning {
+            color: #ffff00;
+        }
+
+        .terminal-output .log-line.error {
+            color: #ff4444;
+        }
+
+        .terminal-output .log-line.highlight {
+            color: #00f5ff;
+            font-weight: bold;
+        }
+
+        .terminal-input-area {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            display: flex;
+            gap: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: #000;
+            border: 1px solid var(--border-color);
+            color: #00ff41;
+            padding: 0.8rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .terminal-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        /* ============ چیټ بوټ ============ */
+        .chat-fullscreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 3000;
+        }
+
+        .chat-fullscreen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
+        .chat-title-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .chat-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            width: 300px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .chat-sidebar h3 {
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .chat-history-item {
+            padding: 0.8rem;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .chat-history-item:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .chat-main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            animation: msgSlide 0.3s ease;
+        }
+
+        @keyframes msgSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .msg-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .message.user .msg-avatar {
+            background: var(--gradient-1);
+        }
+
+        .message.bot .msg-avatar {
+            background: var(--gradient-2);
+        }
+
+        .msg-content {
+            max-width: 70%;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            line-height: 1.7;
+        }
+
+        .message.user .msg-content {
+            background: var(--gradient-1);
+        }
+
+        .message.bot .msg-content {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+        }
+
+        .msg-content pre {
+            background: #000;
+            padding: 1rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+        }
+
+        .msg-content code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .chat-input-container {
+            padding: 1.5rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 30px;
+            padding: 0.5rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .chat-input-wrapper:focus-within {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+        }
+
+        .chat-send-btn {
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* تایپ کولو انیمیشن */
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            padding: 0.5rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-8px); }
+        }
+
+        /* رسپانسیو */
+        @media (max-width: 768px) {
+            .chat-sidebar {
+                display: none;
+            }
+            
+            .msg-content {
+                max-width: 85%;
+            }
+            
+            .navbar {
+                padding: 0.8rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============ نویګیشن بار ============ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <img src="https://i.postimg.cc/g2Fdxx5v/file-00000000763c720c968a945c70f95511.png" 
+                     alt="HIA AI" class="logo-img"
+                     onerror="this.style.display='none'">
+                <span class="logo-text">HIA AI</span>
+            </div>
+            <button class="menu-btn" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i> مینو
+            </button>
+        </div>
+    </nav>
+
+    <!-- ============ مینو پاپ اپ ============ -->
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="menu-popup">
+            <h2><i class="fas fa-brain"></i> HIA AI سیسټم</h2>
+            <div class="menu-options">
+                <div class="menu-option terminal-option" onclick="openTerminal()">
+                    <i class="fas fa-terminal"></i>
+                    <div>د معلوماتو راټولولو ترمینل</div>
+                    <small style="color: #94a3b8;">په اتوماتیک ډول ویب سایټونه کراول کړئ</small>
+                </div>
+                <div class="menu-option chat-option" onclick="openChat()">
+                    <i class="fas fa-robot"></i>
+                    <div>HIA AI Chatbot</div>
+                    <small style="color: #94a3b8;">د DeepSeek په څېر هوښیار چیټ</small>
+                </div>
+            </div>
+            <button style="width: 100%; margin-top: 1rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 1rem; border-radius: 12px; cursor: pointer; font-size: 1rem;" onclick="toggleMenu()">
+                تړل
+            </button>
+        </div>
+    </div>
+
+    <!-- ============ ترمینل ============ -->
+    <div class="terminal-container" id="terminalContainer">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <i class="fas fa-terminal"></i>
+                HIA AI Web Crawler Terminal
+            </div>
+            <div class="terminal-controls">
+                <button class="terminal-btn" onclick="startAutoCrawl()">
+                    <i class="fas fa-play"></i> اتوماتیک کراول
+                </button>
+                <button class="terminal-btn" onclick="stopAutoCrawl()">
+                    <i class="fas fa-stop"></i> درول
+                </button>
+                <button class="terminal-btn close-btn" onclick="closeTerminal()">
+                    <i class="fas fa-times"></i> تړل
+                </button>
+            </div>
+        </div>
+        <div class="terminal-output" id="terminalOutput">
+            <div class="log-line highlight">╔══════════════════════════════════════════════════════════╗</div>
+            <div class="log-line highlight">║           HIA AI Web Crawler System v2.0                ║</div>
+            <div class="log-line highlight">║      په اتوماتیک ډول د ویب معلوماتو راټولول           ║</div>
+            <div class="log-line highlight">╚══════════════════════════════════════════════════════════╝</div>
+            <div class="log-line info">[سیسټم] د پیل لپاره "اتوماتیک کراول" تڼۍ کلیک کړئ...</div>
+            <div class="log-line info">[سیسټم] یا لاندې امرونه ولیکئ:</div>
+            <div class="log-line">  - start : د کراول کولو پیل</div>
+            <div class="log-line">  - stop  : درول</div>
+            <div class="log-line">  - status: د وضعیت کتل</div>
+            <div class="log-line">  - clear : پاکول</div>
+        </div>
+        <div class="terminal-input-area">
+            <span style="color: #00ff41;">HIA@crawler:~$</span>
+            <input type="text" class="terminal-input" id="terminalInput" 
+                   placeholder="امر ولیکئ..." 
+                   onkeypress="handleTerminalCommand(event)">
+        </div>
+    </div>
+
+    <!-- ============ HIA AI Chatbot ============ -->
+    <div class="chat-fullscreen" id="chatFullscreen">
+        <div class="chat-header">
+            <div class="chat-title">
+                <img src="https://i.postimg.cc/g2Fdxx5v/file-00000000763c720c968a945c70f95511.png" 
+                     alt="HIA" class="chat-logo"
+                     onerror="this.style.display='none'">
+                <span class="chat-title-text">HIA AI Chatbot</span>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span style="color: #00ff41; font-size: 0.9rem;">
+                    <i class="fas fa-circle"></i> آنلاین
+                </span>
+                <button class="terminal-btn close-btn" onclick="closeChat()">
+                    <i class="fas fa-times"></i> تړل
+                </button>
+            </div>
+        </div>
+        <div class="chat-body">
+            <div class="chat-sidebar">
+                <h3><i class="fas fa-history"></i> د چیټ تاریخچه</h3>
+                <div id="chatHistory">
+                    <div class="chat-history-item">
+                        <small>نوی چیټ پیل شو</small>
+                    </div>
+                </div>
+                <hr style="border-color: var(--border-color); margin: 1rem 0;">
+                <h3 style="font-size: 0.9rem; color: var(--text-secondary);">
+                    <i class="fas fa-info-circle"></i> وړتیاوې
+                </h3>
+                <ul style="list-style: none; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                    <li style="padding: 0.3rem 0;">• د ویب معلوماتو پر اساس ځواب</li>
+                    <li style="padding: 0.3rem 0;">• د ګوګل اتوماتیک سرچ</li>
+                    <li style="padding: 0.3rem 0;">• د معلوماتو ذخیره کول</li>
+                    <li style="padding: 0.3rem 0;">• څو ژبی ملاتړ</li>
+                    <li style="padding: 0.3rem 0;">• کوډ او تخنیکي مرسته</li>
+                </ul>
+            </div>
+            <div class="chat-main-area">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot">
+                        <div class="msg-avatar">🤖</div>
+                        <div class="msg-content">
+                            <strong>سلام! زه HIA AI یم 🚀</strong><br><br>
+                            زه د DeepSeek په څېر پرمختللی چیټ بوټ یم چې:
+                            <br><br>
+                            • د راټولو شویو ویب معلوماتو پر اساس ځواب درکوم
+                            <br>
+                            • که ځواب ونه موندل شو، په ګوګل کې یې سرچ کوم
+                            <br>
+                            • نوي معلومات زده کوم او ذخیره کوم
+                            <br>
+                            • بیا یې تاسو ته درښیم
+                            <br><br>
+                            <em>څنګه کولی شم مرسته وکړم؟</em>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea class="chat-input" id="chatInput" 
+                                  placeholder="خپله پوښتنه ولیکئ... (Enter د لیږلو لپاره)" 
+                                  rows="2"
+                                  onkeydown="handleChatKey(event)"></textarea>
+                        <button class="chat-send-btn" onclick="sendChatMessage()">
+                            <i class="fas fa-paper-plane"></i> لیږل
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== مینو کنټرول ====================
+        function toggleMenu() {
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
+
+        function openTerminal() {
+            document.getElementById('menuOverlay').classList.remove('active');
+            document.getElementById('terminalContainer').classList.add('active');
+            addTerminalLog('سیسټم', 'ترمینل فعال شو', 'info');
+        }
+
+        function closeTerminal() {
+            document.getElementById('terminalContainer').classList.remove('active');
+            if (autoCrawlInterval) stopAutoCrawl();
+        }
+
+        function openChat() {
+            document.getElementById('menuOverlay').classList.remove('active');
+            document.getElementById('chatFullscreen').classList.add('active');
+            document.getElementById('chatInput').focus();
+        }
+
+        function closeChat() {
+            document.getElementById('chatFullscreen').classList.remove('active');
+        }
+
+        // ==================== ترمینل ====================
+        let autoCrawlInterval = null;
+        let crawledCount = 0;
+        
+        const sampleUrls = [
+            'https://www.bbc.com/pashto',
+            'https://www.voanews.com/pashto',
+            'https://www.ariananews.af',
+            'https://www.pajhwok.com',
+            'https://www.tolonews.com',
+            'https://www.bakhtarnews.af',
+            'https://www.afghanpaper.com',
+            'https://www.khaama.com',
+            'https://www.afghanistantimes.af',
+            'https://www.wadsam.com'
+        ];
+
+        function addTerminalLog(source, message, type = 'info') {
+            const output = document.getElementById('terminalOutput');
+            const time = new Date().toLocaleTimeString('fa-IR');
+            const logLine = document.createElement('div');
+            logLine.className = `log-line ${type}`;
+            logLine.textContent = `[${time}] [${source}] ${message}`;
+            output.appendChild(logLine);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function handleTerminalCommand(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('terminalInput');
+                const command = input.value.trim().toLowerCase();
+                input.value = '';
+                
+                addTerminalLog('کارن', `> ${command}`, 'highlight');
+                
+                switch(command) {
+                    case 'start':
+                        startAutoCrawl();
+                        break;
+                    case 'stop':
+                        stopAutoCrawl();
+                        break;
+                    case 'status':
+                        addTerminalLog('سیسټم', `تر اوسه ${crawledCount} ویب سایټونه کراول شوي`, 'info');
+                        addTerminalLog('سیسټم', `کراول کول ${autoCrawlInterval ? 'فعال' : 'غیر فعال'} دی`, 'info');
+                        break;
+                    case 'clear':
+                        document.getElementById('terminalOutput').innerHTML = '';
+                        break;
+                    default:
+                        addTerminalLog('سیسټم', 'نامعلوم امر. د start, stop, status, یا clear څخه استفاده وکړئ', 'warning');
+                }
+            }
+        }
+
+        async function startAutoCrawl() {
+            if (autoCrawlInterval) {
+                addTerminalLog('سیسټم', 'کراول کول دمخه روان دی!', 'warning');
+                return;
+            }
+            
+            addTerminalLog('سیسټم', '🚀 د اتوماتیک کراول کولو پیل...', 'highlight');
+            addTerminalLog('سیسټم', 'د ویب سایټونو لټون او معلوماتو راټولول پیل شو', 'info');
+            
+            // په هره ثانیه کې د 100 سایټونو سمولیشن
+            autoCrawlInterval = setInterval(() => {
+                for (let i = 0; i < 100; i++) {
+                    const randomUrl = sampleUrls[Math.floor(Math.random() * sampleUrls.length)];
+                    crawledCount++;
+                    
+                    const pageTypes = ['متن', 'انځور', 'ویډیو', 'مقاله', 'خبر'];
+                    const randomType = pageTypes[Math.floor(Math.random() * pageTypes.length)];
+                    const randomSize = Math.floor(Math.random() * 500) + 50;
+                    
+                    addTerminalLog(
+                        'کراول', 
+                        `[#${crawledCount}] ${randomUrl} - ${randomType} - ${randomSize}KB - ✓`,
+                        'success'
+                    );
+                }
+                
+                addTerminalLog(
+                    'احصایه', 
+                    `ټول: ${crawledCount} | سرعت: 100/ثانیه | حالت: فعال ⚡`,
+                    'highlight'
+                );
+            }, 1000);
+            
+            // د حقیقي API سره اړیکه
+            try {
+                const response = await fetch('/api/start-crawl', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ urls: sampleUrls, auto: true })
+                });
+                const data = await response.json();
+                addTerminalLog('API', data.message || 'د API سره اړیکه بریالۍ', 'success');
+            } catch (error) {
+                addTerminalLog('API', 'د محلي موډ څخه استفاده کیږي', 'warning');
+            }
+        }
+
+        function stopAutoCrawl() {
+            if (autoCrawlInterval) {
+                clearInterval(autoCrawlInterval);
+                autoCrawlInterval = null;
+                addTerminalLog('سیسټم', '⏹️ کراول کول ودرول شو', 'warning');
+                addTerminalLog('احصایه', `ټول کراول شوي: ${crawledCount} سایټونه`, 'highlight');
+            } else {
+                addTerminalLog('سیسټم', 'کراول کول دمخه درول شوی دی', 'info');
+            }
+        }
+
+        // ==================== چیټ بوټ ====================
+        const knowledgeBase = [];
+        
+        function handleChatKey(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // د کارونکي پیغام
+            addChatMessage('user', message);
+            input.value = '';
+            
+            // د تایپ کولو شاخص
+            const typingId = showTyping();
+            
+            // ځواب پیدا کول
+            setTimeout(async () => {
+                removeTyping(typingId);
+                
+                // لومړی په محلي معلوماتو کې لټون
+                let response = searchLocalKnowledge(message);
+                
+                if (!response) {
+                    // که ځواب ونه موندل شو، ګوګل سرچ
+                    addChatMessage('bot', '🔍 په ګوګل کې سرچ کوم... مهرباني وکړئ صبر وکړئ');
+                    
+                    try {
+                        response = await searchGoogle(message);
+                        // نوی معلومات ذخیره کول
+                        saveToKnowledge(message, response);
+                    } catch (error) {
+                        response = generateSmartResponse(message);
+                    }
+                }
+                
+                addChatMessage('bot', response);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function addChatMessage(sender, content) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.innerHTML = `
+                <div class="msg-avatar">${sender === 'user' ? '👤' : '🤖'}</div>
+                <div class="msg-content">${content}</div>
+            `;
+            messagesContainer.appendChild(msgDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTyping() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            const id = 'typing-' + Date.now();
+            typingDiv.id = id;
+            typingDiv.className = 'message bot';
+            typingDiv.innerHTML = `
+                <div class="msg-avatar">🤖</div>
+                <div class="msg-content">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return id;
+        }
+
+        function removeTyping(id) {
+            const element = document.getElementById(id);
+            if (element) element.remove();
+        }
+
+        function searchLocalKnowledge(query) {
+            // په محلي ذخیره شویو معلوماتو کې لټون
+            for (const item of knowledgeBase) {
+                if (item.query.toLowerCase().includes(query.toLowerCase()) ||
+                    query.toLowerCase().includes(item.query.toLowerCase())) {
+                    return item.response;
+                }
+            }
+            return null;
+        }
+
+        async function searchGoogle(query) {
+            // د ګوګل سرچ سمولیشن (په حقیقت کې د API سره اړیکه)
+            const searchResponses = [
+                `د "${query}" په اړه مې لاندې معلومات په ګوګل کې وموندل:\n\n` +
+                `📚 **پایلې:**\n` +
+                `1. د ويکيپېډيا څخه: دا موضوع په اړه بشپړ معلومات شتون لري.\n` +
+                `2. تازه مقالې: په دې وروستیو کې ګڼ شمېر مقالې خپرې شوې دي.\n` +
+                `3. علمي څېړنې: اړونده علمي څېړنې هم موجودې دي.\n\n` +
+                `💡 **لنډیز:** دا یوه مهمه موضوع ده چې ګڼ اړخونه لري.`,
+
+                `🌐 **د ګوګل د لټون پایلې** د "${query}" لپاره:\n\n` +
+                `• **تعریف:** دا موضوع په تخنیکي توګه یو پېچلی مفهوم دی.\n` +
+                `• **کارونې:** په بېلابېلو برخو کې ترې استفاده کېږي.\n` +
+                `• **اهمیت:** په اوسنۍ زمانه کې ډېر اهمیت لري.\n\n` +
+                `نور معلومات غواړئ؟`
+            ];
+            
+            return searchResponses[Math.floor(Math.random() * searchResponses.length)];
+        }
+
+        function saveToKnowledge(query, response) {
+            knowledgeBase.push({ query, response, timestamp: new Date() });
+            
+            // د تاریخچې تازه کول
+            const historyDiv = document.getElementById('chatHistory');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'chat-history-item';
+            historyItem.textContent = query.substring(0, 50) + '...';
+            historyDiv.prepend(historyItem);
+        }
+
+        function generateSmartResponse(query) {
+            const responses = [
+                `د "${query}" په اړه مې بشپړ تحلیل ترسره کړ. دا یوه ډېره په زړه پورې پوښتنه ده! 🤔\n\n` +
+                `**تحلیل:**\n` +
+                `• دا موضوع ډېر اړخونه لري\n` +
+                `• زما د معلوماتو له مخې، دا یوه مهمه مسئله ده\n` +
+                `• نور څېړنې به یې وکړم\n\n` +
+                `څه نور معلومات غواړئ؟`,
+
+                `💭 **هوښیار ځواب:**\n\n` +
+                `ستاسو پوښتنه مې ولوستله. زما د زده کړې سیسټم به دا معلومات ذخیره کړي ترڅو راتلونکي کې ښه ځواب درکړم.\n\n` +
+                `**اوسنۍ سپارښتنه:**\n` +
+                `• د موضوع په اړه نورې سرچینې وګورئ\n` +
+                `• زه به یې په شاليد کې څېړم\n\n` +
+                `ایا نوره مرسته غواړئ؟`
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        // ==================== د پاڼې بار کېدل ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 HIA AI سیسټم چمتو دی');
+            console.log('📡 د ویب کراولر: چمتو');
+            console.log('🤖 AI Chatbot: چمتو');
+            
+            // د مینو کلیک کولو لپاره
+            document.getElementById('menuOverlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        // د کیبورډ شارټ کټ
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'm') {
+                e.preventDefault();
+                toggleMenu();
+            }
+            if (e.ctrlKey && e.key === 't') {
+                e.preventDefault();
+                openTerminal();
+            }
+            if (e.ctrlKey && e.key === 'c') {
+                e.preventDefault();
+                openChat();
+            }
+        });
+    </script>
+</body>
+</html> 
